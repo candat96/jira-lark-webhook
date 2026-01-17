@@ -9,6 +9,22 @@ echo "🐳 Building Jira-Lark Webhook Docker Image"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
+# Step 0: Check Docker daemon
+echo "🔍 Step 0: Checking Docker daemon..."
+if ! docker info > /dev/null 2>&1; then
+  echo "❌ Docker daemon is not running!"
+  echo ""
+  echo "Please start Docker Desktop first:"
+  echo "  - macOS: Open Docker Desktop app"
+  echo "  - Linux: sudo systemctl start docker"
+  echo "  - Windows: Start Docker Desktop"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Docker daemon is running"
+echo ""
+
 # Step 1: Build TypeScript
 echo "📦 Step 1: Building TypeScript..."
 npm run build
@@ -31,6 +47,7 @@ if [ ! -f .env ]; then
   echo "⚠️  Please edit .env file with your configuration:"
   echo "   - WEBHOOK_URL"
   echo "   - SERVER_URL"
+  echo "   - JIRA_URL"
   echo ""
   read -p "Press Enter after updating .env file..."
 fi
@@ -57,8 +74,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 echo "Next steps:"
 echo "  1. Update src/config/user-mapping.ts with team emails"
-echo "  2. Rebuild: npm run build && docker-compose build"
-echo "  3. Start: docker-compose up -d"
-echo "  4. Check logs: docker-compose logs -f"
-echo "  5. Health check: curl http://localhost:3000/health"
+echo "  2. Update SERVER_URL in .env"
+echo "  3. Rebuild: npm run build && docker-compose build"
+echo "  4. Start: docker-compose up -d"
+echo "  5. Check logs: docker-compose logs -f"
+echo "  6. Health check: curl http://localhost:3000/health"
 echo ""
