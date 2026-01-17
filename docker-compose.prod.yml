@@ -9,7 +9,7 @@ services:
     container_name: jira-lark-webhook-prod
     restart: always
     ports:
-      - "${PORT:-3000}:3000"
+      - "3096:3000"  # VPS port 3096 -> Container port 3000
     env_file:
       - .env
     environment:
