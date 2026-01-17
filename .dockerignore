@@ -2,11 +2,8 @@
 node_modules/
 npm-debug.log*
 
-# TypeScript
-src/
-tsconfig.json
-*.ts
-!dist/
+# Build output (will be built inside Docker)
+dist/
 
 # Testing
 test/

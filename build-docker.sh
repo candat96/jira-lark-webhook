@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Build script cho Docker deployment
+# Docker sẽ tự động build TypeScript bên trong
 # Usage: ./build-docker.sh
 
 set -e
@@ -9,8 +10,8 @@ echo "🐳 Building Jira-Lark Webhook Docker Image"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Step 0: Check Docker daemon
-echo "🔍 Step 0: Checking Docker daemon..."
+# Step 1: Check Docker daemon
+echo "🔍 Step 1: Checking Docker daemon..."
 if ! docker info > /dev/null 2>&1; then
   echo "❌ Docker daemon is not running!"
   echo ""
@@ -23,18 +24,6 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 echo "✅ Docker daemon is running"
-echo ""
-
-# Step 1: Build TypeScript
-echo "📦 Step 1: Building TypeScript..."
-npm run build
-
-if [ $? -ne 0 ]; then
-  echo "❌ TypeScript build failed!"
-  exit 1
-fi
-
-echo "✅ TypeScript build successful"
 echo ""
 
 # Step 2: Check .env file
@@ -55,8 +44,10 @@ fi
 echo "✅ .env file exists"
 echo ""
 
-# Step 3: Build Docker image
+# Step 3: Build Docker image (TypeScript will be built inside Docker)
 echo "🐳 Step 3: Building Docker image..."
+echo "   (TypeScript will be compiled inside Docker)"
+echo ""
 docker-compose build
 
 if [ $? -ne 0 ]; then
@@ -64,6 +55,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+echo ""
 echo "✅ Docker image built successfully"
 echo ""
 
@@ -75,7 +67,7 @@ echo ""
 echo "Next steps:"
 echo "  1. Update src/config/user-mapping.ts with team emails"
 echo "  2. Update SERVER_URL in .env"
-echo "  3. Rebuild: npm run build && docker-compose build"
+echo "  3. If you made changes, rebuild: docker-compose build"
 echo "  4. Start: docker-compose up -d"
 echo "  5. Check logs: docker-compose logs -f"
 echo "  6. Health check: curl http://localhost:3000/health"
