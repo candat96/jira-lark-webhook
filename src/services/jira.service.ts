@@ -5,6 +5,7 @@ import {
   JiraChangelogItem,
 } from '../types/jira.types';
 import { isTeamMember } from '../config/user-mapping';
+import { config } from '../config/config';
 import { logger } from '../utils/logger';
 
 export class JiraService {
@@ -143,17 +144,8 @@ export class JiraService {
    * Extract issue URL từ Jira self link
    */
   private getIssueUrl(selfUrl: string): string {
-    // selfUrl format: https://your-domain.atlassian.net/rest/api/2/issue/12345
-    // Convert to: https://your-domain.atlassian.net/browse/PROJ-123
-    try {
-      const url = new URL(selfUrl);
-      const baseUrl = `${url.protocol}//${url.host}`;
-      // We'll use the issue key in the calling code
-      return baseUrl;
-    } catch (error) {
-      logger.warn('Failed to parse Jira URL:', selfUrl);
-      return selfUrl;
-    }
+    // Dùng JIRA_URL từ config thay vì parse từ selfUrl
+    return config.jiraUrl;
   }
 }
 

@@ -1,0 +1,42 @@
+# Node modules
+node_modules/
+npm-debug.log*
+
+# TypeScript
+src/
+tsconfig.json
+*.ts
+!dist/
+
+# Testing
+test/
+tests/
+test-payloads/
+*.test.js
+
+# Documentation
+*.md
+!README.md
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Misc
+.env.example
+build-docker.sh
+scripts/
