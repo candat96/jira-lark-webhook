@@ -23,6 +23,7 @@ export const JIRA_TEAM_EMAILS: Record<string, boolean> = {
   'admater99@gmail.com': true,            // Nguyễn Tuấn Thành
   'luuanhthu2912@gmail.com': true,        // Lưu Anh Thư
   'tungnt.txt.2k@gmail.com': true,        // Nguyễn Thanh Tùng
+  'nnchau@gmail.com': true,               // NN Châu
 };
 
 /**
@@ -47,6 +48,7 @@ export const JIRA_TO_LARK_EMAIL_MAPPING: Record<string, string> = {
   'admater99@gmail.com': 'admater99@gmail.com',                   // Nguyễn Tuấn Thành
   'luuanhthu2912@gmail.com': 'luuanhthu2912@gmail.com',           // Lưu Anh Thư
   'tungnt.txt.2k@gmail.com': 'tungnt.txt.2k@gmail.com',           // Nguyễn Thanh Tùng
+  'nnchau@gmail.com': 'nganngocchau01@gmail.com',                 // NN Châu
 };
 
 /**
