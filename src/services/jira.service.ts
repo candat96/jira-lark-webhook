@@ -17,15 +17,27 @@ export class JiraService {
     
     // Check reporter
     const reporterEmail = issue.fields.reporter?.emailAddress;
-    if (reporterEmail && isTeamMember(reporterEmail)) {
-      return true;
-    }
+    const reporterName = issue.fields.reporter?.displayName;
     
     // Check assignee
     const assigneeEmail = issue.fields.assignee?.emailAddress;
-    if (assigneeEmail && isTeamMember(assigneeEmail)) {
+    const assigneeName = issue.fields.assignee?.displayName;
+    
+    // Log emails để debug
+    logger.info(`Issue ${issue.key} - Reporter: ${reporterName} (${reporterEmail}), Assignee: ${assigneeName || 'Unassigned'} (${assigneeEmail || 'N/A'})`);
+    
+    if (reporterEmail && isTeamMember(reporterEmail)) {
+      logger.info(`✅ Reporter ${reporterEmail} is team member`);
       return true;
     }
+    
+    if (assigneeEmail && isTeamMember(assigneeEmail)) {
+      logger.info(`✅ Assignee ${assigneeEmail} is team member`);
+      return true;
+    }
+    
+    logger.warn(`⚠️  Issue ${issue.key} ignored - neither reporter nor assignee in team mapping`);
+    logger.warn(`⚠️  Add to user-mapping.ts: '${reporterEmail}': true, or '${assigneeEmail}': true`);
     
     return false;
   }
