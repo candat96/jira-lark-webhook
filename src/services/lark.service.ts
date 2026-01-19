@@ -54,9 +54,9 @@ export class LarkService {
    * Format: Issue Created
    */
   private formatIssueCreatedMessage(event: ProcessedJiraEvent): LarkMessage {
-    const reporterName = formatUserName(event.reporter.displayName);
+    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
     const assigneeName = event.assignee
-      ? formatUserName(event.assignee.displayName)
+      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress)
       : '_Chưa assign_';
 
     const issueUrl = `${event.issueUrl}/browse/${event.issueKey}`;
@@ -81,9 +81,9 @@ export class LarkService {
    * Format: Status Changed
    */
   private formatStatusChangedMessage(event: ProcessedJiraEvent): LarkMessage {
-    const reporterName = formatUserName(event.reporter.displayName);
+    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
     const assigneeName = event.assignee
-      ? formatUserName(event.assignee.displayName)
+      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress)
       : '_Chưa assign_';
 
     const fromStatus = event.changeDetails?.fromValue || 'N/A';
@@ -114,7 +114,7 @@ export class LarkService {
    * Format: Assignee Changed
    */
   private formatAssigneeChangedMessage(event: ProcessedJiraEvent): LarkMessage {
-    const reporterName = formatUserName(event.reporter.displayName);
+    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
 
     const fromAssignee = event.changeDetails?.fromValue || '_Chưa assign_';
     const toAssignee = event.changeDetails?.toValue || '_Chưa assign_';
@@ -138,13 +138,13 @@ export class LarkService {
    * Format: Comment Added
    */
   private formatCommentAddedMessage(event: ProcessedJiraEvent): LarkMessage {
-    const reporterName = formatUserName(event.reporter.displayName);
+    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
     const assigneeName = event.assignee
-      ? formatUserName(event.assignee.displayName)
+      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress)
       : '_Chưa assign_';
 
     const commenterName = event.comment
-      ? formatUserName(event.comment.author.displayName)
+      ? formatUserName(event.comment.author.displayName, event.comment.author.emailAddress)
       : 'Unknown';
 
     // Truncate comment body if too long
