@@ -116,14 +116,20 @@ export class LarkService {
   private formatAssigneeChangedMessage(event: ProcessedJiraEvent): LarkMessage {
     const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
 
+    // fromAssignee: chỉ có tên (không có email từ Jira changelog)
     const fromAssignee = event.changeDetails?.fromValue || '_Chưa assign_';
-    const toAssignee = event.changeDetails?.toValue || '_Chưa assign_';
+    
+    // toAssignee: có đầy đủ thông tin từ event.assignee
+    const toAssignee = event.assignee
+      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress)
+      : '_Chưa assign_';
+    
     const issueUrl = `${event.issueUrl}/browse/${event.issueKey}`;
 
     const content = `**[${event.issueKey}] ${event.issueSummary}**
 
 📝 Reporter: ${reporterName}
-👤 Assignee: ${fromAssignee} → **${toAssignee}**
+👤 Assignee: ${fromAssignee} → ${toAssignee}
 📊 Status: ${event.status}`;
 
     return this.createCardMessage(

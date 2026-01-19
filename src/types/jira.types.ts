@@ -114,6 +114,8 @@ export interface ProcessedJiraEvent {
     field: string;
     fromValue: string | null;
     toValue: string | null;
+    fromAssignee?: JiraUser | null;  // For assignee_changed event
+    toAssignee?: JiraUser | null;    // For assignee_changed event
   };
   comment?: {
     author: JiraUser;
