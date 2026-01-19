@@ -25,11 +25,8 @@ export class WebhookController {
         return;
       }
 
-      // Format Lark message
-      const larkMessage = larkService.formatEventMessage(processedEvent);
-
-      // Send to Lark
-      const success = await larkService.sendMessage(larkMessage);
+      // Send to Lark với retry fallback (tự động retry không tag nếu lỗi)
+      const success = await larkService.sendMessageWithRetry(processedEvent);
 
       if (success) {
         logger.info(`✅ Đã gửi thông báo Lark cho issue ${processedEvent.issueKey} - Lark đã xác nhận nhận được`);

@@ -43,32 +43,56 @@ export class LarkService {
   }
 
   /**
+   * Gửi message với retry fallback (nếu lỗi @mention thì gửi lại không tag)
+   */
+  async sendMessageWithRetry(event: ProcessedJiraEvent): Promise<boolean> {
+    // Format message với @mention trước
+    const messageWithMention = this.formatEventMessage(event, true);
+    
+    // Thử gửi với @mention trước
+    const success = await this.sendMessage(messageWithMention);
+    
+    if (success) {
+      return true;
+    }
+
+    // Nếu thất bại, thử lại không tag
+    logger.warn('⚠️ Gửi với @mention thất bại, thử lại không tag...');
+    
+    // Format lại message không có @mention
+    const messageWithoutMention = this.formatEventMessage(event, false);
+    
+    // Retry
+    return await this.sendMessage(messageWithoutMention);
+  }
+
+  /**
    * Format ProcessedJiraEvent thành Lark card message
    */
-  formatEventMessage(event: ProcessedJiraEvent): LarkMessage {
+  formatEventMessage(event: ProcessedJiraEvent, useMention: boolean = true): LarkMessage {
     const { eventType } = event;
 
     switch (eventType) {
       case 'created':
-        return this.formatIssueCreatedMessage(event);
+        return this.formatIssueCreatedMessage(event, useMention);
       case 'status_changed':
-        return this.formatStatusChangedMessage(event);
+        return this.formatStatusChangedMessage(event, useMention);
       case 'assignee_changed':
-        return this.formatAssigneeChangedMessage(event);
+        return this.formatAssigneeChangedMessage(event, useMention);
       case 'comment_added':
-        return this.formatCommentAddedMessage(event);
+        return this.formatCommentAddedMessage(event, useMention);
       default:
-        return this.formatGenericMessage(event);
+        return this.formatGenericMessage(event, useMention);
     }
   }
 
   /**
    * Format: Issue Created
    */
-  private formatIssueCreatedMessage(event: ProcessedJiraEvent): LarkMessage {
-    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
+  private formatIssueCreatedMessage(event: ProcessedJiraEvent, useMention: boolean = true): LarkMessage {
+    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress, useMention);
     const assigneeName = event.assignee
-      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress)
+      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress, useMention)
       : '_Chưa assign_';
 
     const issueUrl = `${event.issueUrl}/browse/${event.issueKey}`;
@@ -92,10 +116,10 @@ export class LarkService {
   /**
    * Format: Status Changed
    */
-  private formatStatusChangedMessage(event: ProcessedJiraEvent): LarkMessage {
-    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
+  private formatStatusChangedMessage(event: ProcessedJiraEvent, useMention: boolean = true): LarkMessage {
+    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress, useMention);
     const assigneeName = event.assignee
-      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress)
+      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress, useMention)
       : '_Chưa assign_';
 
     const fromStatus = event.changeDetails?.fromValue || 'N/A';
@@ -125,15 +149,15 @@ export class LarkService {
   /**
    * Format: Assignee Changed
    */
-  private formatAssigneeChangedMessage(event: ProcessedJiraEvent): LarkMessage {
-    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
+  private formatAssigneeChangedMessage(event: ProcessedJiraEvent, useMention: boolean = true): LarkMessage {
+    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress, useMention);
 
     // fromAssignee: chỉ có tên (không có email từ Jira changelog)
     const fromAssignee = event.changeDetails?.fromValue || '_Chưa assign_';
     
     // toAssignee: có đầy đủ thông tin từ event.assignee
     const toAssignee = event.assignee
-      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress)
+      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress, useMention)
       : '_Chưa assign_';
     
     const issueUrl = `${event.issueUrl}/browse/${event.issueKey}`;
@@ -155,14 +179,14 @@ export class LarkService {
   /**
    * Format: Comment Added
    */
-  private formatCommentAddedMessage(event: ProcessedJiraEvent): LarkMessage {
-    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress);
+  private formatCommentAddedMessage(event: ProcessedJiraEvent, useMention: boolean = true): LarkMessage {
+    const reporterName = formatUserName(event.reporter.displayName, event.reporter.emailAddress, useMention);
     const assigneeName = event.assignee
-      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress)
+      ? formatUserName(event.assignee.displayName, event.assignee.emailAddress, useMention)
       : '_Chưa assign_';
 
     const commenterName = event.comment
-      ? formatUserName(event.comment.author.displayName, event.comment.author.emailAddress)
+      ? formatUserName(event.comment.author.displayName, event.comment.author.emailAddress, useMention)
       : 'Unknown';
 
     // Truncate comment body if too long
@@ -191,7 +215,7 @@ _"${commentPreview}"_`;
   /**
    * Format: Generic message
    */
-  private formatGenericMessage(event: ProcessedJiraEvent): LarkMessage {
+  private formatGenericMessage(event: ProcessedJiraEvent, useMention: boolean = true): LarkMessage {
     const issueUrl = `${event.issueUrl}/browse/${event.issueKey}`;
     const content = `**[${event.issueKey}] ${event.issueSummary}**
 

@@ -62,11 +62,12 @@ export function isTeamMember(email: string): boolean {
  * Format tên user cho Lark message với @mention nếu có email mapping
  * @param displayName - Tên hiển thị của user từ Jira
  * @param jiraEmail - Email Jira của user (optional)
+ * @param useMention - Có dùng @mention không (default: true)
  * @returns Formatted string với @mention hoặc plain text
  */
-export function formatUserName(displayName: string, jiraEmail?: string): string {
-  // Nếu có email và có trong mapping → tag bằng email + hiển thị tên
-  if (jiraEmail && jiraEmail in JIRA_TO_LARK_EMAIL_MAPPING) {
+export function formatUserName(displayName: string, jiraEmail?: string, useMention: boolean = true): string {
+  // Nếu cho phép mention và có email trong mapping → tag bằng email
+  if (useMention && jiraEmail && jiraEmail in JIRA_TO_LARK_EMAIL_MAPPING) {
     const larkEmail = JIRA_TO_LARK_EMAIL_MAPPING[jiraEmail];
     return `<at email="${larkEmail}"></at> **${displayName}**`;
   }
