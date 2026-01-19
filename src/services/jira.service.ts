@@ -80,7 +80,7 @@ export class JiraService {
 
     // Case 2: Issue Updated
     if (webhookEvent === JiraEventType.ISSUE_UPDATED) {
-      // Check for status change
+      // Priority 1: Check for status change
       const statusChange = this.findChangelogItem(changelog, 'status');
       if (statusChange) {
         logger.info(`Issue ${issue.key} status changed: ${statusChange.fromString} → ${statusChange.toString}`);
@@ -95,7 +95,7 @@ export class JiraService {
         };
       }
 
-      // Check for assignee change
+      // Priority 2: Check for assignee change (only if no status change)
       const assigneeChange = this.findChangelogItem(changelog, 'assignee');
       if (assigneeChange) {
         logger.info(`Issue ${issue.key} assignee changed: ${assigneeChange.fromString} → ${assigneeChange.toString}`);
@@ -110,7 +110,7 @@ export class JiraService {
         };
       }
 
-      // Check for comment
+      // Priority 3: Check for comment (only if no status/assignee change)
       if (comment && payload.issue_event_type_name === 'issue_commented') {
         // Filter: không notify khi tự comment vào issue của mình
         const commentAuthorEmail = comment.author.emailAddress;

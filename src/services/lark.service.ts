@@ -103,7 +103,7 @@ export class LarkService {
 📊 Status: ${fromStatus} → **${toStatus}**`;
 
     return this.createCardMessage(
-      '📊 Trạng thái thay đổi',
+      '📊 Thay đổi trạng thái',
       content,
       template,
       issueUrl
