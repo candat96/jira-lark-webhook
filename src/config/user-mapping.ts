@@ -7,11 +7,22 @@
  * Format: 'jira-email@company.com': true
  */
 export const JIRA_TEAM_EMAILS: Record<string, boolean> = {
-  // TODO: Thêm email Jira của team members tại đây
-  // Example (for testing):
-  'john.doe@company.com': true,
-  'jane.smith@company.com': true,
-  'bob.wilson@company.com': true,
+  // Team members
+  'phambinhan133@gmail.com': true,        // Pham Thi Binh An
+  'datcv@deepcare.io': true,              // Cấn Đạt
+  'ducbeoyt@gmail.com': true,             // Phan Anh Đức
+  'dungcq86@gmail.com': true,             // Trần Tiến Dũng
+  'viethoang08052000@gmail.com': true,    // Viet Hoang
+  'hoanien@gmail.com': true,              // Hoa Niên
+  'huantruong@gmail.com': true,           // Huấn Trương
+  'ttluong.huph1995@gmail.com': true,     // Tăng Thị Lương
+  'tranquangnguyen2811@gmail.com': true,  // Trần Quang Nguyên
+  'hoanntd@deepcare.io': true,            // Nguyễn Trần Đan Hoàn
+  'sonkdqte@gmail.com': true,             // Phạm Hồng Sơn
+  'du@gmail.com': true,                   // Nguyễn Dư
+  'admater99@gmail.com': true,            // Nguyễn Tuấn Thành
+  'luuanhthu2912@gmail.com': true,        // Lưu Anh Thư
+  'tungnt.txt.2k@gmail.com': true,        // Nguyễn Thanh Tùng
 };
 
 /**
