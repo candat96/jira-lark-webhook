@@ -14,6 +14,7 @@ export class WebhookController {
 
       logger.info(`Received Jira webhook: ${payload.webhookEvent} for issue ${payload.issue?.key}`);
       logger.debug('Payload:', JSON.stringify(payload, null, 2));
+      console.log("paylload", payload)
 
       // Parse event
       const processedEvent = jiraService.parseEvent(payload);
