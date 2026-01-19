@@ -32,10 +32,10 @@ export class WebhookController {
       const success = await larkService.sendMessage(larkMessage);
 
       if (success) {
-        logger.info(`✅ Đã gửi thông báo Lark cho issue ${processedEvent.issueKey}`);
+        logger.info(`✅ Đã gửi thông báo Lark cho issue ${processedEvent.issueKey} - Lark đã xác nhận nhận được`);
         res.status(200).json({ message: 'Notification sent' });
       } else {
-        logger.error(`❌ Gửi thông báo Lark thất bại cho issue ${processedEvent.issueKey}`);
+        logger.error(`❌ Gửi thông báo Lark thất bại cho issue ${processedEvent.issueKey} - Lark trả về lỗi`);
         // Still return 200 to Jira to prevent retries
         res.status(200).json({ message: 'Notification failed' });
       }

@@ -17,15 +17,27 @@ export class LarkService {
         },
       });
 
-      if (response.data.code === 0 || response.status === 200) {
-        logger.info('Lark message sent successfully');
+      // Log full response for debugging
+      logger.info('Lark API response:', JSON.stringify(response.data));
+      
+      // Lark returns { StatusCode: 0 } for success
+      // Also check for code: 0 (some endpoints use this)
+      if (response.data.StatusCode === 0 || response.data.code === 0) {
+        logger.info('✅ Lark message sent successfully');
         return true;
       } else {
-        logger.error('Lark API error:', response.data);
+        logger.error('❌ Lark API error:', JSON.stringify(response.data));
         return false;
       }
     } catch (error) {
-      logger.error('Failed to send Lark message:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        logger.error('❌ Lark API request failed:', {
+          status: error.response.status,
+          data: error.response.data,
+        });
+      } else {
+        logger.error('❌ Failed to send Lark message:', error);
+      }
       return false;
     }
   }
