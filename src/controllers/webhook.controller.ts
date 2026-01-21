@@ -3,6 +3,7 @@ import { JiraWebhookPayload } from '../types/jira.types';
 import { jiraService } from '../services/jira.service';
 import { larkService } from '../services/lark.service';
 import { logger } from '../utils/logger';
+import { config } from '../config/config';
 
 export class WebhookController {
   /**
@@ -25,8 +26,19 @@ export class WebhookController {
         return;
       }
 
+      // Xác định webhook URL dựa trên project key
+      const projectKey = payload.issue?.key?.split('-')[0]; // Extract project key (e.g., "APO" from "APO-70")
+      let webhookUrl = config.larkWebhookUrl; // Default webhook
+      
+      if (projectKey === 'APO' && config.larkWebhookUrlApp) {
+        webhookUrl = config.larkWebhookUrlApp;
+        logger.info(`🎯 Project APO detected - using WEBHOOK_URL_APP`);
+      } else {
+        logger.info(`🎯 Project ${projectKey} - using default WEBHOOK_URL`);
+      }
+
       // Send to Lark với retry fallback (tự động retry không tag nếu lỗi)
-      const success = await larkService.sendMessageWithRetry(processedEvent);
+      const success = await larkService.sendMessageWithRetry(processedEvent, webhookUrl);
 
       if (success) {
         logger.info(`✅ Đã gửi thông báo Lark cho issue ${processedEvent.issueKey} - Lark đã xác nhận nhận được`);
@@ -75,6 +87,35 @@ export class WebhookController {
       }
     } catch (error) {
       logger.error('Error sending test message:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error occurred',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Test endpoint - send test message to APP webhook
+   */
+  async testLarkAppIntegration(req: Request, res: Response): Promise<void> {
+    try {
+      logger.info('Sending test message to Lark APP webhook...');
+      const success = await larkService.sendTestMessage(config.larkWebhookUrlApp);
+
+      if (success) {
+        res.status(200).json({
+          success: true,
+          message: 'Test message sent to Lark APP webhook successfully',
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to send test message to Lark APP webhook',
+        });
+      }
+    } catch (error) {
+      logger.error('Error sending test message to APP webhook:', error);
       res.status(500).json({
         success: false,
         message: 'Error occurred',

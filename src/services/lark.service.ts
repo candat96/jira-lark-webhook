@@ -9,9 +9,10 @@ export class LarkService {
   /**
    * Gửi message đến Lark webhook
    */
-  async sendMessage(message: LarkMessage): Promise<boolean> {
+  async sendMessage(message: LarkMessage, webhookUrl?: string): Promise<boolean> {
     try {
-      const response = await axios.post(config.larkWebhookUrl, message, {
+      const targetUrl = webhookUrl || config.larkWebhookUrl;
+      const response = await axios.post(targetUrl, message, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -45,12 +46,12 @@ export class LarkService {
   /**
    * Gửi message với retry fallback (nếu lỗi @mention thì gửi lại không tag)
    */
-  async sendMessageWithRetry(event: ProcessedJiraEvent): Promise<boolean> {
+  async sendMessageWithRetry(event: ProcessedJiraEvent, webhookUrl?: string): Promise<boolean> {
     // Format message với @mention trước
     const messageWithMention = this.formatEventMessage(event, true);
     
     // Thử gửi với @mention trước
-    const success = await this.sendMessage(messageWithMention);
+    const success = await this.sendMessage(messageWithMention, webhookUrl);
     
     if (success) {
       return true;
@@ -63,7 +64,7 @@ export class LarkService {
     const messageWithoutMention = this.formatEventMessage(event, false);
     
     // Retry
-    return await this.sendMessage(messageWithoutMention);
+    return await this.sendMessage(messageWithoutMention, webhookUrl);
   }
 
   /**
@@ -284,14 +285,14 @@ _"${commentPreview}"_`;
   /**
    * Send test message
    */
-  async sendTestMessage(): Promise<boolean> {
+  async sendTestMessage(webhookUrl?: string): Promise<boolean> {
     const message = this.createCardMessage(
       '✅ Test Message',
       '**Jira-Lark Webhook đang hoạt động!**\n\nServer đã sẵn sàng nhận Jira webhooks.',
       'green'
     );
 
-    return this.sendMessage(message);
+    return this.sendMessage(message, webhookUrl);
   }
 }
 

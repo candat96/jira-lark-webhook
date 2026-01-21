@@ -27,6 +27,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.post('/webhook/jira', (req, res) => webhookController.handleJiraWebhook(req, res));
 app.get('/health', (req, res) => webhookController.healthCheck(req, res));
 app.get('/test', (req, res) => webhookController.testLarkIntegration(req, res));
+app.get('/test-app', (req, res) => webhookController.testLarkAppIntegration(req, res));
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -38,6 +39,7 @@ app.get('/', (req: Request, res: Response) => {
       webhook: 'POST /webhook/jira',
       health: 'GET /health',
       test: 'GET /test',
+      testApp: 'GET /test-app',
     },
   });
 });
