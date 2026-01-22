@@ -33,6 +33,9 @@ export class WebhookController {
       if (projectKey === 'APO' && config.larkWebhookUrlApp) {
         webhookUrl = config.larkWebhookUrlApp;
         logger.info(`🎯 Project APO detected - using WEBHOOK_URL_APP`);
+      } else if (projectKey === 'QLLQLKH' && config.larkWebhookUrlQlkh) {
+        webhookUrl = config.larkWebhookUrlQlkh;
+        logger.info(`🎯 Project QLLQLKH detected - using WEBHOOK_URL_QLKH`);
       } else {
         logger.info(`🎯 Project ${projectKey} - using default WEBHOOK_URL`);
       }
@@ -116,6 +119,35 @@ export class WebhookController {
       }
     } catch (error) {
       logger.error('Error sending test message to APP webhook:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error occurred',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Test endpoint - send test message to QLKH webhook
+   */
+  async testLarkQlkhIntegration(req: Request, res: Response): Promise<void> {
+    try {
+      logger.info('Sending test message to Lark QLKH webhook...');
+      const success = await larkService.sendTestMessage(config.larkWebhookUrlQlkh);
+
+      if (success) {
+        res.status(200).json({
+          success: true,
+          message: 'Test message sent to Lark QLKH webhook successfully',
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to send test message to Lark QLKH webhook',
+        });
+      }
+    } catch (error) {
+      logger.error('Error sending test message to QLKH webhook:', error);
       res.status(500).json({
         success: false,
         message: 'Error occurred',

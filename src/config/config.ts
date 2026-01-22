@@ -8,6 +8,7 @@ export const config = {
   serverUrl: process.env.SERVER_URL || `http://localhost:${process.env.PORT || 3000}`,
   larkWebhookUrl: process.env.WEBHOOK_URL || '',
   larkWebhookUrlApp: process.env.WEBHOOK_URL_APP || '',
+  larkWebhookUrlQlkh: process.env.WEBHOOK_URL_QLKH || '',
   jiraUrl: process.env.JIRA_URL || '',
 };
 
