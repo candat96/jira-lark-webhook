@@ -9,6 +9,8 @@ export const config = {
   larkWebhookUrl: process.env.WEBHOOK_URL || '',
   larkWebhookUrlApp: process.env.WEBHOOK_URL_APP || '',
   larkWebhookUrlQlkh: process.env.WEBHOOK_URL_QLKH || '',
+  larkWebhookUrlPrm: process.env.WEBHOOK_URL_PRM || '',
+  larkWebhookUrlHrm: process.env.WEBHOOK_URL_HRM || '',
   jiraUrl: process.env.JIRA_URL || '',
 };
 

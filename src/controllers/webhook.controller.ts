@@ -36,6 +36,12 @@ export class WebhookController {
       } else if (projectKey === 'QLLQLKH' && config.larkWebhookUrlQlkh) {
         webhookUrl = config.larkWebhookUrlQlkh;
         logger.info(`🎯 Project QLLQLKH detected - using WEBHOOK_URL_QLKH`);
+      } else if (projectKey === 'PRM' && config.larkWebhookUrlPrm) {
+        webhookUrl = config.larkWebhookUrlPrm;
+        logger.info(`🎯 Project PRM detected - using WEBHOOK_URL_PRM`);
+      } else if (projectKey === 'HRM' && config.larkWebhookUrlHrm) {
+        webhookUrl = config.larkWebhookUrlHrm;
+        logger.info(`🎯 Project HRM detected - using WEBHOOK_URL_HRM`);
       } else {
         logger.info(`🎯 Project ${projectKey} - using default WEBHOOK_URL`);
       }
@@ -148,6 +154,64 @@ export class WebhookController {
       }
     } catch (error) {
       logger.error('Error sending test message to QLKH webhook:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error occurred',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Test endpoint - send test message to PRM webhook
+   */
+  async testLarkPrmIntegration(req: Request, res: Response): Promise<void> {
+    try {
+      logger.info('Sending test message to Lark PRM webhook...');
+      const success = await larkService.sendTestMessage(config.larkWebhookUrlPrm);
+
+      if (success) {
+        res.status(200).json({
+          success: true,
+          message: 'Test message sent to Lark PRM webhook successfully',
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to send test message to Lark PRM webhook',
+        });
+      }
+    } catch (error) {
+      logger.error('Error sending test message to PRM webhook:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error occurred',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Test endpoint - send test message to HRM webhook
+   */
+  async testLarkHrmIntegration(req: Request, res: Response): Promise<void> {
+    try {
+      logger.info('Sending test message to Lark HRM webhook...');
+      const success = await larkService.sendTestMessage(config.larkWebhookUrlHrm);
+
+      if (success) {
+        res.status(200).json({
+          success: true,
+          message: 'Test message sent to Lark HRM webhook successfully',
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to send test message to Lark HRM webhook',
+        });
+      }
+    } catch (error) {
+      logger.error('Error sending test message to HRM webhook:', error);
       res.status(500).json({
         success: false,
         message: 'Error occurred',

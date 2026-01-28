@@ -29,6 +29,8 @@ app.get('/health', (req, res) => webhookController.healthCheck(req, res));
 app.get('/test', (req, res) => webhookController.testLarkIntegration(req, res));
 app.get('/test-app', (req, res) => webhookController.testLarkAppIntegration(req, res));
 app.get('/test-qlkh', (req, res) => webhookController.testLarkQlkhIntegration(req, res));
+app.get('/test-prm', (req, res) => webhookController.testLarkPrmIntegration(req, res));
+app.get('/test-hrm', (req, res) => webhookController.testLarkHrmIntegration(req, res));
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -42,6 +44,8 @@ app.get('/', (req: Request, res: Response) => {
       test: 'GET /test',
       testApp: 'GET /test-app',
       testQlkh: 'GET /test-qlkh',
+      testPrm: 'GET /test-prm',
+      testHrm: 'GET /test-hrm',
     },
   });
 });
