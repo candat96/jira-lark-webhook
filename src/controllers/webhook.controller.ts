@@ -28,8 +28,16 @@ export class WebhookController {
 
       // Xác định webhook URL dựa trên project key
       const projectKey = payload.issue?.key?.split('-')[0]; // Extract project key (e.g., "APO" from "APO-70")
+
+      // Bỏ qua thông báo cho các project không cần notify
+      if (projectKey === 'HOP') {
+        logger.info(`🚫 Project ${projectKey} - skipping notification`);
+        res.status(200).json({ message: 'Project ignored' });
+        return;
+      }
+
       let webhookUrl = config.larkWebhookUrl; // Default webhook
-      
+
       if (projectKey === 'APO' && config.larkWebhookUrlApp) {
         webhookUrl = config.larkWebhookUrlApp;
         logger.info(`🎯 Project APO detected - using WEBHOOK_URL_APP`);
